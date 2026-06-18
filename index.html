@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>家事らくキッチン</title>
+  <title>kitchen-assistant</title>
   <meta
     name="description"
     content="冷蔵庫の在庫から献立を提案し、不足食材を買い物リストにまとめる家事ラク支援アプリ。"
@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#fff8ef">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="家事らく">
+  <meta name="apple-mobile-web-app-title" content="kitchen-assistant">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.svg">
@@ -48,8 +48,8 @@
 
     <header class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Mainichi Lite Kitchen Planner</p>
-        <h1>家事らくキッチン</h1>
+        <p class="eyebrow">Kitchen Planning Assistant</p>
+        <h1>kitchen-assistant</h1>
         <p class="lead">
           冷蔵庫にあるものから献立を決めて、足りないものだけを買い物リスト化。
           考える負担を減らして、夕方のバタバタを軽くします。
@@ -154,11 +154,11 @@
               <input id="quick-only-toggle" type="checkbox">
               <span>20分以内だけ見る</span>
             </label>
-            <button class="primary-button compact" id="ai-suggest-button" type="button">AIで献立を考える</button>
+            <button class="primary-button compact is-hidden" id="ai-suggest-button" type="button">AIで献立を考える</button>
           </div>
         </div>
 
-        <section class="ai-panel" id="ai-panel">
+        <section class="ai-panel is-hidden" id="ai-panel">
           <div class="inventory-head">
             <div>
               <p class="kicker">AI Suggest</p>
