@@ -1,4 +1,4 @@
-const CACHE_NAME = "kajiraku-cache-v1";
+const CACHE_NAME = "kitchen-assistant-cache-v1";
 const APP_ASSETS = [
   "./",
   "./index.html",
