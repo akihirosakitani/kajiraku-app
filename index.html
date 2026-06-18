@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家事らくキッチン</title>
+  <meta
+    name="description"
+    content="冷蔵庫の在庫から献立を提案し、不足食材を買い物リストにまとめる家事ラク支援アプリ。"
+  >
+  <meta name="theme-color" content="#fff8ef">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="家事らく">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="access-gate" id="access-gate">
+    <div class="access-card">
+      <p class="eyebrow">Family Only</p>
+      <h1 class="gate-title">家族だけのキッチン共有</h1>
+      <p class="gate-copy">
+        このアプリは、家族だけが使えるようにアクセスコード制にしています。
+        共有されたコードを入力すると使えます。
+      </p>
+      <form class="gate-form" id="access-form">
+        <label class="inline-field">
+          <span>家族アクセスコード</span>
+          <input id="access-code-input" type="password" placeholder="コードを入力" maxlength="32" autocomplete="current-password">
+        </label>
+        <button class="primary-button" type="submit">アプリを開く</button>
+      </form>
+      <p class="gate-error is-hidden" id="access-error">コードが違います。家族に確認してください。</p>
+    </div>
+  </div>
+
+  <div class="page-shell">
+    <div class="install-banner is-hidden" id="install-banner" aria-live="polite">
+      <div>
+        <p class="install-title">スマホのホーム画面に追加できます</p>
+        <p class="install-copy">毎日の献立確認をアプリ感覚で、すぐ開けるようにします。</p>
+      </div>
+      <button class="primary-button compact" id="install-button" type="button">追加する</button>
+    </div>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Mainichi Lite Kitchen Planner</p>
+        <h1>家事らくキッチン</h1>
+        <p class="lead">
+          冷蔵庫にあるものから献立を決めて、足りないものだけを買い物リスト化。
+          考える負担を減らして、夕方のバタバタを軽くします。
+        </p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#pantry">在庫を選ぶ</a>
+          <a class="secondary-button" href="#shopping">買い物を見る</a>
+          <span class="family-badge">家族限定</span>
+        </div>
+      </div>
+
+      <aside class="hero-panel">
+        <p class="panel-title">今日の時短ルート</p>
+        <ol class="mini-steps">
+          <li>家にある食材をタップ</li>
+          <li>作れそうな献立を確認</li>
+          <li>不足分だけ買い物メモへ</li>
+        </ol>
+        <div class="pulse-note">
+          <span class="pulse-dot"></span>
+          入力内容はこの端末に保存されます
+        </div>
+      </aside>
+    </header>
+
+    <main class="dashboard">
+      <section class="summary-strip" aria-label="概要">
+        <article class="summary-card">
+          <p class="summary-label">選択中の在庫</p>
+          <p class="summary-value" id="selected-count">0</p>
+        </article>
+        <article class="summary-card">
+          <p class="summary-label">今夜の候補</p>
+          <p class="summary-value" id="recipe-count">0</p>
+        </article>
+        <article class="summary-card accent">
+          <p class="summary-label">買い足し</p>
+          <p class="summary-value" id="shopping-count">0</p>
+        </article>
+      </section>
+
+      <section class="panel" id="pantry">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Step 1</p>
+            <h2>いま家にあるもの</h2>
+          </div>
+          <div class="pantry-heading-actions">
+            <p class="section-note">よくある食材をタップするだけ。あとから追加もできます。</p>
+            <button class="primary-button compact" id="open-pantry-form-button" type="button">＋ 食材を追加</button>
+          </div>
+        </div>
+
+        <div class="pantry-groups" id="pantry-groups"></div>
+
+        <form class="inline-form is-hidden" id="custom-pantry-form">
+          <label class="inline-field">
+            <span>食材を追加</span>
+            <input
+              id="custom-pantry-input"
+              type="text"
+              placeholder="例: しめじ、豆腐、ヨーグルト"
+              maxlength="24"
+            >
+          </label>
+          <label class="inline-field inline-select">
+            <span>カテゴリ</span>
+            <select id="custom-pantry-category">
+              <option value="野菜">野菜</option>
+              <option value="たんぱく質">たんぱく質</option>
+              <option value="主食・乾物">主食・乾物</option>
+              <option value="調味料">調味料</option>
+              <option value="その他">その他</option>
+            </select>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="primary-button compact">追加する</button>
+            <button type="button" class="secondary-button compact" id="close-pantry-form-button">閉じる</button>
+          </div>
+        </form>
+
+        <section class="inventory-board">
+          <div class="inventory-head">
+            <div>
+              <p class="kicker">Stock</p>
+              <h3>追加した在庫一覧</h3>
+            </div>
+            <p class="section-note">残り少ない食材もここで見える化できます。</p>
+          </div>
+          <ul class="inventory-list" id="inventory-list"></ul>
+        </section>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Step 2</p>
+            <h2>今夜の献立候補</h2>
+          </div>
+          <div class="recipe-tools">
+            <label class="toggle-row">
+              <input id="quick-only-toggle" type="checkbox">
+              <span>20分以内だけ見る</span>
+            </label>
+            <button class="primary-button compact" id="ai-suggest-button" type="button">AIで献立を考える</button>
+          </div>
+        </div>
+
+        <section class="ai-panel" id="ai-panel">
+          <div class="inventory-head">
+            <div>
+              <p class="kicker">AI Suggest</p>
+              <h3>AIおすすめ献立</h3>
+            </div>
+            <p class="section-note" id="ai-status-copy">在庫と家族リクエストから、今夜向けの候補を考えます。</p>
+          </div>
+          <div class="ai-feedback is-hidden" id="ai-feedback"></div>
+          <div class="recipe-grid ai-grid" id="ai-recipe-grid"></div>
+        </section>
+
+        <div class="recipe-grid" id="recipe-grid"></div>
+      </section>
+
+      <section class="two-column">
+        <section class="panel" id="shopping">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">Step 3</p>
+              <h2>買い物リスト</h2>
+            </div>
+            <button class="secondary-button compact" id="clear-shopping-button" type="button">リセット</button>
+          </div>
+
+          <p class="selected-recipe" id="selected-recipe-name">まだ献立を選んでいません</p>
+          <ul class="shopping-list" id="shopping-list"></ul>
+
+          <form class="inline-form" id="manual-shopping-form">
+            <label class="inline-field">
+              <span>手入力で追加</span>
+              <input
+                id="manual-shopping-input"
+                type="text"
+                placeholder="例: 牛乳、ラップ、バナナ"
+                maxlength="24"
+              >
+            </label>
+            <button type="submit" class="primary-button compact">追加</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">Share</p>
+              <h2>家族メモと献立リクエスト</h2>
+            </div>
+            <p class="section-note">家事メモに加えて、食べたい献立も残せます。</p>
+          </div>
+
+          <form class="family-form" id="family-form">
+            <label>
+              <span>やること</span>
+              <input id="family-task-input" type="text" placeholder="例: お米を炊く" maxlength="30">
+            </label>
+            <label>
+              <span>担当</span>
+              <select id="family-owner-input">
+                <option value="わたし">わたし</option>
+                <option value="パートナー">パートナー</option>
+                <option value="こども">こども</option>
+              </select>
+            </label>
+            <button type="submit" class="primary-button compact">メモする</button>
+          </form>
+
+          <ul class="family-list" id="family-list"></ul>
+
+          <div class="request-section">
+            <div class="inventory-head">
+              <div>
+                <p class="kicker">Request</p>
+                <h3>今週の献立リクエスト</h3>
+              </div>
+              <p class="section-note">家族が食べたいものを先に集めておけます。</p>
+            </div>
+
+            <form class="request-form" id="request-form">
+              <label>
+                <span>食べたいもの</span>
+                <input id="request-dish-input" type="text" placeholder="例: ハンバーグ、うどん、カレー" maxlength="30">
+              </label>
+              <label>
+                <span>だれの希望？</span>
+                <select id="request-owner-input">
+                  <option value="わたし">わたし</option>
+                  <option value="パートナー">パートナー</option>
+                  <option value="こども">こども</option>
+                </select>
+              </label>
+              <button type="submit" class="primary-button compact">リクエストする</button>
+            </form>
+
+            <ul class="request-list" id="request-list"></ul>
+          </div>
+
+          <div class="request-section">
+            <div class="inventory-head">
+              <div>
+                <p class="kicker">Access</p>
+                <h3>家族だけで使うためのメモ</h3>
+              </div>
+            </div>
+            <p class="section-note">
+              公開後は、このURLと家族アクセスコードを知っている人だけが利用できます。
+              まずは身内向けの軽い制限として使う想定です。
+            </p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
