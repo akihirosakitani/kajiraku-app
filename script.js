@@ -1,6 +1,7 @@
-const STORAGE_KEY = "kajiraku-app-state-v1";
-const SESSION_UNLOCK_KEY = "kajiraku-family-unlocked";
+const STORAGE_KEY = "kitchen-assistant-state-v1";
+const SESSION_UNLOCK_KEY = "kitchen-assistant-family-unlocked";
 const FAMILY_ACCESS_CODE = "kazoku1234";
+const AI_ENABLED = false;
 
 const pantryCatalog = [
   {
@@ -102,6 +103,7 @@ const recipeGridEl = document.querySelector("#recipe-grid");
 const aiRecipeGridEl = document.querySelector("#ai-recipe-grid");
 const aiStatusCopyEl = document.querySelector("#ai-status-copy");
 const aiFeedbackEl = document.querySelector("#ai-feedback");
+const aiPanelEl = document.querySelector("#ai-panel");
 const shoppingListEl = document.querySelector("#shopping-list");
 const familyListEl = document.querySelector("#family-list");
 const inventoryListEl = document.querySelector("#inventory-list");
@@ -131,7 +133,9 @@ installButtonEl.addEventListener("click", handleInstallClick);
 accessFormEl.addEventListener("submit", handleAccessSubmit);
 openPantryFormButtonEl.addEventListener("click", openPantryForm);
 closePantryFormButtonEl.addEventListener("click", closePantryForm);
-aiSuggestButtonEl.addEventListener("click", requestAiSuggestions);
+if (AI_ENABLED) {
+  aiSuggestButtonEl.addEventListener("click", requestAiSuggestions);
+}
 quickOnlyToggleEl.addEventListener("change", () => {
   state.quickOnly = quickOnlyToggleEl.checked;
   persistState();
@@ -163,12 +167,24 @@ function render() {
   quickOnlyToggleEl.checked = state.quickOnly;
   renderPantry();
   renderInventoryList();
-  renderAiSuggestions();
+  renderAiMode();
   renderRecipes();
   renderShoppingList();
   renderFamilyList();
   renderRequestList();
   updateSummary();
+}
+
+function renderAiMode() {
+  if (!AI_ENABLED) {
+    aiPanelEl.classList.add("is-hidden");
+    aiSuggestButtonEl.classList.add("is-hidden");
+    return;
+  }
+
+  aiPanelEl.classList.remove("is-hidden");
+  aiSuggestButtonEl.classList.remove("is-hidden");
+  renderAiSuggestions();
 }
 
 function renderPantry() {
@@ -357,6 +373,10 @@ function enrichRecipe(recipe, selectedSet, requestTerms) {
 }
 
 async function requestAiSuggestions() {
+  if (!AI_ENABLED) {
+    return;
+  }
+
   state.aiStatus = "loading";
   state.aiError = null;
   renderAiSuggestions();
