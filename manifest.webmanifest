@@ -1,6 +1,6 @@
 {
-  "name": "家事らくキッチン",
-  "short_name": "家事らく",
+  "name": "kitchen-assistant",
+  "short_name": "kitchen-assistant",
   "description": "冷蔵庫の在庫から献立を提案し、不足食材を買い物リストにまとめる家事ラク支援アプリ。",
   "start_url": "./index.html",
   "scope": "./",
